@@ -55,7 +55,7 @@ public class GroupListAdapter extends RecyclerView.Adapter {
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
             case ITEM_GROUP:
-                return new ItemGroup(LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_group_list_item, parent, false));
+                return new ItemGroup(LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_group_item, parent, false));
         }
         throw new RuntimeException("There is no type that matches");
     }

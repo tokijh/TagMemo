@@ -1,6 +1,5 @@
 package com.timejh.tagmemo_java.group;
 
-import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -9,7 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import com.timejh.tagmemo_java.R;
 import com.timejh.tagmemo_java.group.adapter.GroupListAdapter;
 
-public class GroupListActivity extends AppCompatActivity implements GroupListAdapter.Callback {
+public class GroupActivity extends AppCompatActivity implements GroupListAdapter.Callback {
 
     private RecyclerView rv_group;
     private GroupListAdapter groupListAdapter;
@@ -17,15 +16,13 @@ public class GroupListActivity extends AppCompatActivity implements GroupListAda
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_group_list);
+        setContentView(R.layout.activity_group);
 
         initView();
 
         initAdapter();
 
         initManager();
-
-        startActivity(new Intent(this, GroupManageActivity.class));
     }
 
     private void initView() {

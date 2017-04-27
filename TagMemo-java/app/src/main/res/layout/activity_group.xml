@@ -4,7 +4,7 @@
     android:id="@+id/activity_group_list"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.timejh.tagmemo_java.group.GroupListActivity">
+    tools:context="com.timejh.tagmemo_java.group.GroupActivity">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_group"
@@ -14,6 +14,6 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentLeft="true"
-        tools:listitem="@layout/activity_group_list_item" />
+        tools:listitem="@layout/activity_group_item" />
 
 </RelativeLayout>
