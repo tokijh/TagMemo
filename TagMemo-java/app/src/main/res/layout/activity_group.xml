@@ -8,7 +8,7 @@
     tools:context="com.timejh.tagmemo_java.group.GroupActivity">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_group"
+        android:id="@+id/rv_groupmemo"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentBottom="true"

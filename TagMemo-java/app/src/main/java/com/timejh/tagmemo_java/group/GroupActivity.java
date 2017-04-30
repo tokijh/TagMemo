@@ -22,7 +22,7 @@ import io.realm.Realm;
 
 public class GroupActivity extends AppCompatActivity implements GroupListAdapter.Callback {
 
-    private RecyclerView rv_group;
+    private RecyclerView rv_groupmemo;
 
     private FloatingActionMenu fab;
     private FloatingActionButton fab_edit, fab_add;
@@ -42,11 +42,11 @@ public class GroupActivity extends AppCompatActivity implements GroupListAdapter
 
         initListener();
 
-        initValue();
+//        initValue();
     }
 
     private void initView() {
-        rv_group = (RecyclerView) findViewById(R.id.rv_group);
+        rv_groupmemo = (RecyclerView) findViewById(R.id.rv_groupmemo);
 
         fab = (FloatingActionMenu) findViewById(R.id.fab);
         fab_edit = (FloatingActionButton) findViewById(R.id.fab_edit);
@@ -54,12 +54,18 @@ public class GroupActivity extends AppCompatActivity implements GroupListAdapter
     }
 
     private void initAdapter() {
-        groupListAdapter = new GroupListAdapter(Realm.getDefaultInstance().where(GroupMemo.class).isNull("parentId").findAllSorted("position"), this);
-        rv_group.setAdapter(groupListAdapter);
+        groupListAdapter = new GroupListAdapter(
+                this,
+                Realm.getDefaultInstance()
+                        .where(GroupMemo.class)
+                        .equalTo("parentId", "parentid")
+                        .findAllSorted("position"),
+                this);
+        rv_groupmemo.setAdapter(groupListAdapter);
     }
 
     private void initManager() {
-        rv_group.setLayoutManager(new LinearLayoutManager(this));
+        rv_groupmemo.setLayoutManager(new LinearLayoutManager(this));
     }
 
     private void initListener() {
@@ -72,11 +78,13 @@ public class GroupActivity extends AppCompatActivity implements GroupListAdapter
         Realm.getDefaultInstance().executeTransaction(realm -> {
             {
                 Group group1 = realm.createObject(Group.class, Database.createID(Group.class));
+                group1.parentId = "parentid";
                 group1.title = "그룹1";
                 group1.last_date = Database.getCurrentDate();
 
                 GroupMemo groupMemo_group1 = realm.createObject(GroupMemo.class, Database.createID(GroupMemo.class));
                 groupMemo_group1.type = GroupMemo.TYPE_GROUP;
+                groupMemo_group1.parentId = "parentid";
                 groupMemo_group1.group = group1;
                 groupMemo_group1.last_date = Database.getCurrentDate();
                 groupMemo_group1.position = realm.where(GroupMemo.class).max("position").longValue() + 1;
@@ -141,10 +149,12 @@ public class GroupActivity extends AppCompatActivity implements GroupListAdapter
                 }
 
                 Group group2 = realm.createObject(Group.class, Database.createID(Group.class));
+                group2.parentId = "parentid";
                 group2.title = "그룹2";
                 group2.last_date = Database.getCurrentDate();
 
                 GroupMemo groupMemo_group2 = realm.createObject(GroupMemo.class, Database.createID(GroupMemo.class));
+                groupMemo_group2.parentId = "parentid";
                 groupMemo_group2.type = GroupMemo.TYPE_GROUP;
                 groupMemo_group2.group = group2;
                 groupMemo_group2.last_date = Database.getCurrentDate();

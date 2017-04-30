@@ -1,5 +1,7 @@
 package com.timejh.tagmemo_java.group.adapter;
 
+import android.content.Context;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +14,7 @@ import com.timejh.tagmemo_java.model.GroupMemo;
 import com.timejh.tagmemo_java.model.Memo;
 
 import io.realm.OrderedRealmCollection;
+import io.realm.Realm;
 import io.realm.RealmRecyclerViewAdapter;
 
 import static com.timejh.tagmemo_java.model.GroupMemo.TYPE_GROUP;
@@ -23,16 +26,20 @@ import static com.timejh.tagmemo_java.model.GroupMemo.TYPE_MEMO;
 
 public class GroupListAdapter extends RealmRecyclerViewAdapter {
 
+    private Context context;
     private Callback callback;
 
-    public GroupListAdapter(OrderedRealmCollection<GroupMemo> orderedRealmCollection, Callback callback) {
+    public GroupListAdapter(Context context, OrderedRealmCollection<GroupMemo> orderedRealmCollection, Callback callback) {
         super(orderedRealmCollection, true);
+        this.context = context;
         this.callback = callback;
     }
 
     private void setItemGroup(GroupHolder holder, int position) {
         Group group = ((GroupMemo) getItem(position)).group;
 
+        holder.group_id = group.id;
+        holder.initAdapter();
         holder.tv_title.setText(group.title);
         holder.tv_count.setText(group.tags.size() + "");
     }
@@ -84,13 +91,22 @@ public class GroupListAdapter extends RealmRecyclerViewAdapter {
 
         int position;
 
+        String group_id;
+
         TextView tv_title;
         TextView tv_count;
+        RecyclerView rv_groupmemo;
+
+        GroupListAdapter groupListAdapter;
 
         public GroupHolder(View itemView) {
             super(itemView);
 
             initView();
+
+//            initAdapter();
+
+            initManager();
 
             initListener();
         }
@@ -98,11 +114,40 @@ public class GroupListAdapter extends RealmRecyclerViewAdapter {
         private void initView() {
             tv_title = (TextView) itemView.findViewById(R.id.tv_title);
             tv_count = (TextView) itemView.findViewById(R.id.tv_count);
+            rv_groupmemo = (RecyclerView) itemView.findViewById(R.id.rv_groupmemo);
+        }
+
+        private void initAdapter() {
+            groupListAdapter = new GroupListAdapter(
+                    context,
+                    Realm.getDefaultInstance()
+                            .where(GroupMemo.class)
+                            .equalTo("parentId", group_id)
+                            .findAllSorted("position"),
+                    callback
+            );
+            rv_groupmemo.setAdapter(groupListAdapter);
+        }
+
+        private void initManager() {
+            rv_groupmemo.setLayoutManager(new LinearLayoutManager(context));
         }
 
         private void initListener() {
             itemView.setOnClickListener(groupClickListener);
         }
+
+        Callback callback = new Callback() {
+            @Override
+            public void onGroupClicked(int position) {
+
+            }
+
+            @Override
+            public void onMemoClicked(int position) {
+
+            }
+        };
 
         View.OnClickListener groupClickListener =  v -> callback.onGroupClicked(position);
     }
