@@ -1,6 +1,5 @@
 package com.timejh.tagmemo_java.group.adapter;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,53 +8,52 @@ import android.widget.TextView;
 
 import com.timejh.tagmemo_java.R;
 import com.timejh.tagmemo_java.model.Group;
+import com.timejh.tagmemo_java.model.GroupMemo;
+import com.timejh.tagmemo_java.model.Memo;
 
-import java.util.ArrayList;
-import java.util.List;
+import io.realm.OrderedRealmCollection;
+import io.realm.RealmRecyclerViewAdapter;
+
+import static com.timejh.tagmemo_java.model.GroupMemo.TYPE_GROUP;
+import static com.timejh.tagmemo_java.model.GroupMemo.TYPE_MEMO;
 
 /**
  * Created by tokijh on 2017. 4. 27..
  */
 
-public class GroupListAdapter extends RecyclerView.Adapter {
+public class GroupListAdapter extends RealmRecyclerViewAdapter {
 
-    private static final int ITEM_GROUP = 0;
-
-    private List<GroupExtend> groupExtends;
-
-    private Context context;
     private Callback callback;
 
-    public GroupListAdapter(Context context, Callback callback) {
-        this.context = context;
+    public GroupListAdapter(OrderedRealmCollection<GroupMemo> orderedRealmCollection, Callback callback) {
+        super(orderedRealmCollection, true);
         this.callback = callback;
-        groupExtends = new ArrayList<>();
     }
 
-    public void add(Group group) {
-        groupExtends.add(new GroupExtend(ITEM_GROUP, group));
-        this.notifyDataSetChanged();
+    private void setItemGroup(GroupHolder holder, int position) {
+        Group group = ((GroupMemo) getItem(position)).group;
+
+        holder.tv_title.setText(group.title);
+        holder.tv_count.setText(group.tags.size() + "");
     }
 
-    public void set(List<Group> groups) {
-        groupExtends.clear();
-        for (Group group : groups) {
-            add(group);
-        }
-        this.notifyDataSetChanged();
+    private void setItemMemo(MemoHolder holder, int position) {
+        Memo memo = ((GroupMemo) getItem(position)).memo;
+
+        holder.tv_title.setText(memo.title);
     }
 
-    private void setItemGroup(ItemGroup itemGroup, int position) {
-        Group group = groupExtends.get(position).group;
-        itemGroup.tv_title.setText(group.title);
-        itemGroup.tv_count.setText(group.count + "");
+    public GroupMemo get(int position) {
+        return (GroupMemo) getItem(position);
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
-            case ITEM_GROUP:
-                return new ItemGroup(LayoutInflater.from(parent.getContext()).inflate(R.layout.activity_group_item, parent, false));
+            case TYPE_GROUP:
+                return new GroupHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_group, parent, false));
+            case TYPE_MEMO:
+                return new MemoHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.item_memo, parent, false));
         }
         throw new RuntimeException("There is no type that matches");
     }
@@ -63,30 +61,33 @@ public class GroupListAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         switch (holder.getItemViewType()) {
-            case ITEM_GROUP :
-                setItemGroup((ItemGroup) holder, position);
+            case TYPE_GROUP:
+                setItemGroup((GroupHolder) holder, position);
+                break;
+            case TYPE_MEMO:
+                setItemMemo((MemoHolder) holder, position);
                 break;
         }
     }
 
     @Override
-    public int getItemCount() {
-        return groupExtends.size();
+    public long getItemId(int index) {
+        return super.getItemId(index);
     }
 
     @Override
     public int getItemViewType(int position) {
-        return groupExtends.get(position).type;
+        return ((GroupMemo) getItem(position)).type;
     }
 
-    private class ItemGroup extends RecyclerView.ViewHolder {
+    class GroupHolder extends RecyclerView.ViewHolder {
 
         int position;
 
         TextView tv_title;
         TextView tv_count;
 
-        public ItemGroup(View itemView) {
+        public GroupHolder(View itemView) {
             super(itemView);
 
             initView();
@@ -100,23 +101,39 @@ public class GroupListAdapter extends RecyclerView.Adapter {
         }
 
         private void initListener() {
-            itemView.setOnClickListener(itemGroupClickListener);
+            itemView.setOnClickListener(groupClickListener);
         }
 
-        View.OnClickListener itemGroupClickListener =  v -> callback.onItemClicked(position);
+        View.OnClickListener groupClickListener =  v -> callback.onGroupClicked(position);
     }
 
-    private class GroupExtend {
-        int type;
-        Group group;
+    class MemoHolder extends RecyclerView.ViewHolder {
 
-        GroupExtend(int type, Group group) {
-            this.type = type;
-            this.group = group;
+        int position;
+
+        TextView tv_title;
+
+        public MemoHolder(View itemView) {
+            super(itemView);
+
+            initView();
+
+            initListener();
         }
+
+        private void initView() {
+            tv_title = (TextView) itemView.findViewById(R.id.tv_title);
+        }
+
+        private void initListener() {
+            itemView.setOnClickListener(memoClickListener);
+        }
+
+        View.OnClickListener memoClickListener =  v -> callback.onMemoClicked(position);
     }
 
     public interface Callback {
-        void onItemClicked(int position);
+        void onGroupClicked(int position);
+        void onMemoClicked(int position);
     }
 }

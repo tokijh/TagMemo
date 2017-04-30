@@ -37,8 +37,10 @@ public class HasgTagListAdapter extends RecyclerView.Adapter {
     }
 
     public void set(List<HashTag> hashTags) {
-        this.hashTags = hashTags;
-        this.notifyDataSetChanged();
+        this.hashTags.clear();
+        for (HashTag hashTag : hashTags) {
+            add(hashTag);
+        }
     }
 
     public void remove(int position) {
@@ -46,8 +48,20 @@ public class HasgTagListAdapter extends RecyclerView.Adapter {
         this.notifyDataSetChanged();
     }
 
+    public List<HashTag> get() {
+        return hashTags;
+    }
+
     public HashTag get(int position) {
         return hashTags.get(position);
+    }
+
+    public boolean isContain(HashTag hashTag) {
+        for (HashTag listHashTag : hashTags) {
+            if (listHashTag.tag.equals(hashTag.tag))
+                return true;
+        }
+        return false;
     }
 
     private void setHashTags(ItemHashTag itemHashTag, int position) {

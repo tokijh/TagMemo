@@ -5,17 +5,17 @@ import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
 /**
- * Created by tokijh on 2017. 4. 27..
+ * Created by tokijh on 2017. 4. 30..
  */
 
-public class Group extends RealmObject {
+public class Memo extends RealmObject {
     @PrimaryKey
     public String id;
 
     public String parentId;
     public String title;
+    public String content;
     public RealmList<HashTag> tags;
-    public RealmList<GroupMemo> groupMemos;
     public long position;
 
     public String last_date;

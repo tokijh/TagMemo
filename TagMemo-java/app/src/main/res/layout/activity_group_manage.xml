@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_group_manage"
@@ -9,7 +10,9 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.timejh.tagmemo_java.group.GroupManageActivity">
+    tools:context="com.timejh.tagmemo_java.group.GroupManageActivity"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
 
     <EditText
         android:id="@+id/ed_title"
@@ -18,9 +21,10 @@
         android:inputType="textPersonName"
         android:hint="Name"
         android:ems="10"
-        android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:background="@drawable/round_border" />
 
     <RelativeLayout
         android:id="@+id/layout_tag"
@@ -36,36 +40,40 @@
             android:id="@+id/layout_tag_add"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true">
 
-            <AutoCompleteTextView
-                android:id="@+id/actv_tag"
-                android:hint="Tag"
-                android:layout_weight="1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"/>
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-            <Button
-                android:id="@+id/bt_tag_add"
-                android:text="Add"
-                android:layout_weight="0"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"/>
+                <AutoCompleteTextView
+                    android:id="@+id/actv_tag"
+                    android:hint="Tag"
+                    android:layout_weight="1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center" />
+
+                <Button
+                    android:id="@+id/bt_tag_add"
+                    android:text="Add"
+                    android:layout_weight="0"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center" />
+
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/iv_tag_line1"
+                android:layout_width="match_parent"
+                android:layout_height="4dp"
+                app:srcCompat="@drawable/dotted_line" />
 
         </LinearLayout>
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="4dp"
-            app:srcCompat="@drawable/dotted_line"
-            android:id="@+id/iv_tag_line1"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentStart="true"
-            android:layout_below="@+id/layout_tag_add" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_tag"
@@ -73,11 +81,95 @@
             android:layout_height="match_parent"
             android:layout_alignParentBottom="true"
             android:layout_alignParentStart="true"
-            android:layout_below="@+id/iv_tag_line1"
+            android:layout_below="@+id/layout_tag_add"
             android:layout_alignParentEnd="true"
             android:layout_marginTop="8dp"
             android:padding="5dp"
             tools:listitem="@layout/tag_item" />
     </RelativeLayout>
+
+    <com.github.clans.fab.FloatingActionMenu
+        android:id="@+id/fab_edit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginRight="15dp"
+        fab:menu_colorNormal="#1565C0"
+        fab:menu_colorPressed="#2272CD"
+        fab:menu_colorRipple="#62B2FF">
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab_edit_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:src="@android:drawable/ic_menu_delete"
+            fab:fab_size="mini"
+            fab:fab_colorNormal="#1565C0"
+            fab:fab_colorPressed="#2272CD"
+            fab:fab_colorRipple="#62B2FF" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab_edit_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:src="@android:drawable/ic_menu_save"
+            fab:fab_size="mini"
+            fab:fab_colorNormal="#1565C0"
+            fab:fab_colorPressed="#2272CD"
+            fab:fab_colorRipple="#62B2FF" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab_edit_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            fab:fab_size="mini"
+            fab:fab_colorNormal="#1565C0"
+            fab:fab_colorPressed="#2272CD"
+            fab:fab_colorRipple="#62B2FF" />
+
+    </com.github.clans.fab.FloatingActionMenu>
+
+
+    <com.github.clans.fab.FloatingActionMenu
+        android:id="@+id/fab_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="10dp"
+        android:layout_marginRight="15dp"
+        fab:menu_colorNormal="#1565C0"
+        fab:menu_colorPressed="#2272CD"
+        fab:menu_colorRipple="#62B2FF">
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab_view_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:src="@android:drawable/ic_menu_delete"
+            fab:fab_size="mini"
+            fab:fab_colorNormal="#1565C0"
+            fab:fab_colorPressed="#2272CD"
+            fab:fab_colorRipple="#62B2FF" />
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/fab_view_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:src="@android:drawable/ic_menu_edit"
+            fab:fab_size="mini"
+            fab:fab_colorNormal="#1565C0"
+            fab:fab_colorPressed="#2272CD"
+            fab:fab_colorRipple="#62B2FF" />
+
+    </com.github.clans.fab.FloatingActionMenu>
 
 </RelativeLayout>

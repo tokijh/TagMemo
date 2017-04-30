@@ -1,21 +1,24 @@
 package com.timejh.tagmemo_java.model;
 
-import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
 /**
- * Created by tokijh on 2017. 4. 27..
+ * Created by tokijh on 2017. 4. 30..
  */
 
-public class Group extends RealmObject {
+public class GroupMemo extends RealmObject {
+
+    public static final int TYPE_GROUP = 0;
+    public static final int TYPE_MEMO = 1;
+
     @PrimaryKey
     public String id;
 
+    public int type;
     public String parentId;
-    public String title;
-    public RealmList<HashTag> tags;
-    public RealmList<GroupMemo> groupMemos;
+    public Group group;
+    public Memo memo;
     public long position;
 
     public String last_date;
