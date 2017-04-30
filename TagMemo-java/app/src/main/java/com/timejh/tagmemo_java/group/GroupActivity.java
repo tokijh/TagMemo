@@ -42,7 +42,7 @@ public class GroupActivity extends AppCompatActivity implements GroupListAdapter
 
         initListener();
 
-//        initValue();
+        initValue();
     }
 
     private void initView() {
@@ -216,6 +216,63 @@ public class GroupActivity extends AppCompatActivity implements GroupListAdapter
                         groupMemo_group2_group1_memo1.parentId = group2_group1.id;
                         groupMemo_group2_group1_memo1.last_date = Database.getCurrentDate();
                         groupMemo_group2_group1_memo1.position = 0;
+
+                        Memo group2_group1_memo2 = realm.createObject(Memo.class, Database.createID(Memo.class));
+                        group2_group1_memo2.title = "그룹2-그룹1-메모2";
+                        group2_group1_memo2.content = "그룹2-그룹1-메모2";
+                        group2_group1_memo2.parentId = group2_group1.id;
+                        group2_group1_memo2.position = 1;
+                        group2_group1_memo2.last_date = Database.getCurrentDate();
+
+                        GroupMemo groupMemo_group2_group1_memo2 = realm.createObject(GroupMemo.class, Database.createID(GroupMemo.class));
+                        groupMemo_group2_group1_memo2.type = GroupMemo.TYPE_MEMO;
+                        groupMemo_group2_group1_memo2.memo = group2_group1_memo1;
+                        groupMemo_group2_group1_memo2.parentId = group2_group1.id;
+                        groupMemo_group2_group1_memo2.last_date = Database.getCurrentDate();
+                        groupMemo_group2_group1_memo2.position = 1;
+
+                        Group group2_group1_group1 = realm.createObject(Group.class, Database.createID(Group.class));
+                        group2_group1_group1.title = "그룹2-그룹1-그룹1";
+                        group2_group1_group1.parentId = group2_group1.id;
+                        group2_group1_group1.position = 2;
+                        group2_group1_group1.last_date = Database.getCurrentDate();
+
+                        GroupMemo groupMemo_group2_group1_group1 = realm.createObject(GroupMemo.class, Database.createID(GroupMemo.class));
+                        groupMemo_group2_group1_group1.type = GroupMemo.TYPE_GROUP;
+                        groupMemo_group2_group1_group1.group = group2_group1_group1;
+                        groupMemo_group2_group1_group1.parentId = group2_group1.id;
+                        groupMemo_group2_group1_group1.last_date = Database.getCurrentDate();
+                        groupMemo_group2_group1_group1.position = 2;
+
+                        {
+                            Memo group2_group1_group1_memo1 = realm.createObject(Memo.class, Database.createID(Memo.class));
+                            group2_group1_group1_memo1.title = "그룹2-그룹1-그룹1-메모1";
+                            group2_group1_group1_memo1.content = "그룹2-그룹1-그룹1-메모1";
+                            group2_group1_group1_memo1.parentId = group2_group1_group1.id;
+                            group2_group1_group1_memo1.position = 0;
+                            group2_group1_group1_memo1.last_date = Database.getCurrentDate();
+
+                            GroupMemo groupMemo_group2_group1_group_1memo1 = realm.createObject(GroupMemo.class, Database.createID(GroupMemo.class));
+                            groupMemo_group2_group1_group_1memo1.type = GroupMemo.TYPE_MEMO;
+                            groupMemo_group2_group1_group_1memo1.memo = group2_group1_group1_memo1;
+                            groupMemo_group2_group1_group_1memo1.parentId = group2_group1_group1.id;
+                            groupMemo_group2_group1_group_1memo1.last_date = Database.getCurrentDate();
+                            groupMemo_group2_group1_group_1memo1.position = 0;
+
+                            Memo group2_group1_group1_memo2 = realm.createObject(Memo.class, Database.createID(Memo.class));
+                            group2_group1_group1_memo2.title = "그룹2-그룹1-그룹1-메모2";
+                            group2_group1_group1_memo2.content = "그룹2-그룹1-그룹1-메모2";
+                            group2_group1_group1_memo2.parentId = group2_group1_group1.id;
+                            group2_group1_group1_memo2.position = 1;
+                            group2_group1_group1_memo2.last_date = Database.getCurrentDate();
+
+                            GroupMemo groupMemo_group2_group1_group1_memo2 = realm.createObject(GroupMemo.class, Database.createID(GroupMemo.class));
+                            groupMemo_group2_group1_group1_memo2.type = GroupMemo.TYPE_MEMO;
+                            groupMemo_group2_group1_group1_memo2.memo = group2_group1_group1_memo2;
+                            groupMemo_group2_group1_group1_memo2.parentId = group2_group1_group1.id;
+                            groupMemo_group2_group1_group1_memo2.last_date = Database.getCurrentDate();
+                            groupMemo_group2_group1_group1_memo2.position = 1;
+                        }
                     }
                 }
             }
