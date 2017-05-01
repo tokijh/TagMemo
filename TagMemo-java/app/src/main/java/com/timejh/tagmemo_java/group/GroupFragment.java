@@ -135,7 +135,6 @@ public class GroupFragment extends Fragment implements GroupListAdapter.Callback
     }
 
     public interface Listener {
-        // TODO: Update argument type and name
         void onClickGroup(String group_id);
 
         void onClickMemo(String memo_id);
