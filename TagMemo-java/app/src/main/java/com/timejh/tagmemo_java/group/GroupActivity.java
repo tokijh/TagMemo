@@ -1,33 +1,31 @@
 package com.timejh.tagmemo_java.group;
 
 import android.content.Intent;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.View;
+import android.widget.FrameLayout;
 
-import com.github.clans.fab.FloatingActionButton;
-import com.github.clans.fab.FloatingActionMenu;
 import com.timejh.tagmemo_java.R;
-import com.timejh.tagmemo_java.group.adapter.GroupListAdapter;
 import com.timejh.tagmemo_java.model.Group;
 import com.timejh.tagmemo_java.model.GroupMemo;
-import com.timejh.tagmemo_java.model.HashTag;
 import com.timejh.tagmemo_java.model.Memo;
 import com.timejh.tagmemo_java.util.Database;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import io.realm.Realm;
 
-public class GroupActivity extends AppCompatActivity implements GroupListAdapter.Callback {
+public class GroupActivity extends AppCompatActivity implements GroupFragment.Listener {
 
-    private RecyclerView rv_groupmemo;
+    private FrameLayout contentView;
 
-    private FloatingActionMenu fab;
-    private FloatingActionButton fab_edit, fab_add;
+    private FragmentManager manager;
 
-    private GroupListAdapter groupListAdapter;
+    private List<Fragment> fragmentList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,41 +34,22 @@ public class GroupActivity extends AppCompatActivity implements GroupListAdapter
 
         initView();
 
-        initAdapter();
-
-        initManager();
-
-        initListener();
+        initFragmentSettings();
 
         initValue();
     }
 
     private void initView() {
-        rv_groupmemo = (RecyclerView) findViewById(R.id.rv_groupmemo);
-
-        fab = (FloatingActionMenu) findViewById(R.id.fab);
-        fab_edit = (FloatingActionButton) findViewById(R.id.fab_edit);
-        fab_add = (FloatingActionButton) findViewById(R.id.fab_add);
+        contentView = (FrameLayout) findViewById(R.id.contentView);
     }
 
-    private void initAdapter() {
-        groupListAdapter = new GroupListAdapter(
-                this,
-                Realm.getDefaultInstance()
-                        .where(GroupMemo.class)
-                        .equalTo("parentId", "parentid")
-                        .findAllSorted("position"),
-                this);
-        rv_groupmemo.setAdapter(groupListAdapter);
-    }
+    private void initFragmentSettings() {
+        manager = getSupportFragmentManager();
+        fragmentList = new ArrayList<>();
 
-    private void initManager() {
-        rv_groupmemo.setLayoutManager(new LinearLayoutManager(this));
-    }
+        fragmentList.add(new GroupFragment(""));
 
-    private void initListener() {
-        fab_edit.setOnClickListener(onClickListener);
-        fab_add.setOnClickListener(onClickListener);
+        showContentFragment();
     }
 
     private void initValue() {
@@ -78,13 +57,13 @@ public class GroupActivity extends AppCompatActivity implements GroupListAdapter
         Realm.getDefaultInstance().executeTransaction(realm -> {
             {
                 Group group1 = realm.createObject(Group.class, Database.createID(Group.class));
-                group1.parentId = "parentid";
+                group1.parentId = "";
                 group1.title = "그룹1";
                 group1.last_date = Database.getCurrentDate();
 
                 GroupMemo groupMemo_group1 = realm.createObject(GroupMemo.class, Database.createID(GroupMemo.class));
                 groupMemo_group1.type = GroupMemo.TYPE_GROUP;
-                groupMemo_group1.parentId = "parentid";
+                groupMemo_group1.parentId = "";
                 groupMemo_group1.group = group1;
                 groupMemo_group1.last_date = Database.getCurrentDate();
                 groupMemo_group1.position = realm.where(GroupMemo.class).max("position").longValue() + 1;
@@ -149,12 +128,12 @@ public class GroupActivity extends AppCompatActivity implements GroupListAdapter
                 }
 
                 Group group2 = realm.createObject(Group.class, Database.createID(Group.class));
-                group2.parentId = "parentid";
+                group2.parentId = "";
                 group2.title = "그룹2";
                 group2.last_date = Database.getCurrentDate();
 
                 GroupMemo groupMemo_group2 = realm.createObject(GroupMemo.class, Database.createID(GroupMemo.class));
-                groupMemo_group2.parentId = "parentid";
+                groupMemo_group2.parentId = "";
                 groupMemo_group2.type = GroupMemo.TYPE_GROUP;
                 groupMemo_group2.group = group2;
                 groupMemo_group2.last_date = Database.getCurrentDate();
@@ -279,33 +258,77 @@ public class GroupActivity extends AppCompatActivity implements GroupListAdapter
         });
     }
 
+    public void showContentFragment(Fragment fragment) {
+        manager.beginTransaction()
+                .replace(R.id.contentView, fragment)
+                .addToBackStack(fragment.getTag())
+                .commit();
+    }
+
+    public void showContentFragment(int position) {
+        showContentFragment(fragmentList.get(position));
+    }
+
+    public void pushContentFragment(Fragment fragment) {
+        fragmentList.add(fragment);
+        showContentFragment();
+    }
+
+    public void popContentFragment() {
+        if (fragmentList.size() > 1) {
+            fragmentList.remove(fragmentList.size() - 1);
+        }
+    }
+
+    public void showContentFragment() {
+        if (fragmentList.size() > 0) {
+            showContentFragment(fragmentList.get(fragmentList.size() - 1));
+        }
+    }
+
+    public void popshowContentFragment() {
+        popContentFragment();
+        showContentFragment();
+    }
+
+    public boolean isPopable() {
+        return fragmentList.size() > 1;
+    }
+
     private void startGroupManager(int mode, String group_id) {
         startActivity(new Intent(this, GroupManageActivity.class)
                 .putExtra("mode", mode)
                 .putExtra("group_id", group_id));
     }
 
-    private View.OnClickListener onClickListener = v -> {
-        switch (v.getId()) {
-            case R.id.fab_edit:
-                Log.e("TAGG", Realm.getDefaultInstance().where(HashTag.class).findAll().toString());
-                Log.e("TAGGA", Realm.getDefaultInstance().where(Group.class).findAll().toString());
-                Log.e("TAGGB", Realm.getDefaultInstance().where(GroupMemo.class).findAll().toString());
-                break;
-            case R.id.fab_add:
-                startGroupManager(GroupManageActivity.MODE_CREATE, null);
-                break;
-        }
-        fab.close(true);
-    };
-
     @Override
-    public void onGroupClicked(int position) {
-        startGroupManager(GroupManageActivity.MODE_VIEW, groupListAdapter.get(position).id);
+    public void onBackPressed() {
+        if (isPopable()) {
+            popshowContentFragment();
+            return;
+        }
+        finish();
     }
 
     @Override
-    public void onMemoClicked(int position) {
+    public void onClickGroup(String group_id) {
+        Log.d("here", group_id);
+        fragmentList.add(new GroupFragment(group_id));
+        showContentFragment();
+    }
+
+    @Override
+    public void onClickMemo(String memo_id) {
+
+    }
+
+    @Override
+    public void onClickAddGroup(String group_id) {
+        startGroupManager(GroupManageActivity.MODE_CREATE, group_id);
+    }
+
+    @Override
+    public void onClickAddMemo(String group_id) {
 
     }
 }

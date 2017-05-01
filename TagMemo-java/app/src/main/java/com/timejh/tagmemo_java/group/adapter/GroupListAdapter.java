@@ -38,6 +38,7 @@ public class GroupListAdapter extends RealmRecyclerViewAdapter {
     private void setItemGroup(GroupHolder holder, int position) {
         Group group = ((GroupMemo) getItem(position)).group;
 
+        holder.position = position;
         holder.group_id = group.id;
         holder.initAdapter();
         holder.tv_title.setText(group.title);
@@ -47,6 +48,7 @@ public class GroupListAdapter extends RealmRecyclerViewAdapter {
     private void setItemMemo(MemoHolder holder, int position) {
         Memo memo = ((GroupMemo) getItem(position)).memo;
 
+        holder.position = position;
         holder.tv_title.setText(memo.title);
     }
 
@@ -136,18 +138,6 @@ public class GroupListAdapter extends RealmRecyclerViewAdapter {
         private void initListener() {
             itemView.setOnClickListener(groupClickListener);
         }
-
-        Callback callback = new Callback() {
-            @Override
-            public void onGroupClicked(int position) {
-
-            }
-
-            @Override
-            public void onMemoClicked(int position) {
-
-            }
-        };
 
         View.OnClickListener groupClickListener =  v -> callback.onGroupClicked(position);
     }
