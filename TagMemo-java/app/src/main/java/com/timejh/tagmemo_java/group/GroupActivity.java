@@ -6,7 +6,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.FrameLayout;
 
 import com.timejh.tagmemo_java.R;
 import com.timejh.tagmemo_java.model.Group;
@@ -21,8 +20,6 @@ import io.realm.Realm;
 
 public class GroupActivity extends AppCompatActivity implements GroupFragment.Listener {
 
-    private FrameLayout contentView;
-
     private FragmentManager manager;
 
     private List<Fragment> fragmentList;
@@ -32,15 +29,9 @@ public class GroupActivity extends AppCompatActivity implements GroupFragment.Li
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group);
 
-        initView();
-
         initFragmentSettings();
 
-        initValue();
-    }
-
-    private void initView() {
-        contentView = (FrameLayout) findViewById(R.id.contentView);
+//        addValue();
     }
 
     private void initFragmentSettings() {
@@ -52,7 +43,7 @@ public class GroupActivity extends AppCompatActivity implements GroupFragment.Li
         showContentFragment();
     }
 
-    private void initValue() {
+    private void addValue() {
         // 테스트용 DB저장
         Realm.getDefaultInstance().executeTransaction(realm -> {
             {
