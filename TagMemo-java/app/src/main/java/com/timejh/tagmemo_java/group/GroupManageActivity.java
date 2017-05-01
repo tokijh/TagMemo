@@ -33,7 +33,6 @@ public class GroupManageActivity extends AppCompatActivity implements HasgTagLis
     public static final int MODE_EDIT = 2;
 
     private int mode;
-    private String parent_id;
     private String group_id;
 
     private EditText ed_title;
@@ -79,9 +78,6 @@ public class GroupManageActivity extends AppCompatActivity implements HasgTagLis
                 this.mode = bundle.getInt("mode");
                 if (bundle.containsKey("group_id")) {
                     this.group_id = bundle.getString("group_id");
-                }
-                if (bundle.containsKey("parent_id")) {
-                    this.parent_id = bundle.getString("parent_id");
                 }
                 return;
             }
@@ -211,8 +207,8 @@ public class GroupManageActivity extends AppCompatActivity implements HasgTagLis
                 break;
         }
 
-        if (group != null)
-            saveGroupMemo(group);
+        saveGroupMemo(group);
+        this.group_id = group.id;
 
         Dialog.dismiss();
 
@@ -228,7 +224,7 @@ public class GroupManageActivity extends AppCompatActivity implements HasgTagLis
 
         group.last_date = Database.getCurrentDate();
         group.title = ed_title.getText().toString();
-        group.parentId = this.parent_id;
+        group.parentId = this.group_id;
         group.tags = new RealmList<>();
         for (HashTag hashTag : hasgTagListAdapter.get()) {
             group.tags.add(saveTag(realm, hashTag.tag));
@@ -271,9 +267,9 @@ public class GroupManageActivity extends AppCompatActivity implements HasgTagLis
 
         GroupMemo groupMemo = realm.createObject(GroupMemo.class, Database.createID(GroupMemo.class));
         groupMemo.last_date = Database.getCurrentDate();
-        groupMemo.parentId = this.parent_id;
+        groupMemo.parentId = this.group_id;
         groupMemo.group = group;
-        groupMemo.position = realm.where(GroupMemo.class).max("position").longValue() + 1;
+        groupMemo.position = realm.where(GroupMemo.class).equalTo("parentId", group_id).max("position").longValue() + 1;
         groupMemo.type = GroupMemo.TYPE_GROUP;
 
         realm.commitTransaction();
