@@ -19,6 +19,7 @@
         <activity
             android:name=".group.GroupManageActivity"
             android:configChanges="orientation|screenSize" />
+        <activity android:name=".memo.MemoManageActivity"></activity>
     </application>
 
 </manifest>

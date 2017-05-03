@@ -1,6 +1,6 @@
 package com.timejh.tagmemo_java.adapter;
 
-import android.content.Context;
+import android.os.Build;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,21 +11,20 @@ import com.timejh.tagmemo_java.R;
 import com.timejh.tagmemo_java.model.HashTag;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
  * Created by tokijh on 2017. 4. 27..
  */
 
-public class HasgTagListAdapter extends RecyclerView.Adapter {
+public class HashTagListAdapter extends RecyclerView.Adapter {
 
-    private Context context;
     private Callback callback;
 
     private List<HashTag> hashTags;
 
-    public HasgTagListAdapter(Context context, Callback callback) {
-        this.context = context;
+    public HashTagListAdapter(Callback callback) {
         this.callback = callback;
 
         hashTags = new ArrayList<>();
@@ -45,6 +44,15 @@ public class HasgTagListAdapter extends RecyclerView.Adapter {
 
     public void remove(int position) {
         hashTags.remove(position);
+        this.notifyDataSetChanged();
+    }
+
+    public void sort() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            hashTags.sort((o1, o2) -> o1.tag.compareTo(o2.tag));
+        } else {
+            Collections.sort(hashTags, (o1, o2) -> o1.tag.compareTo(o2.tag));
+        }
         this.notifyDataSetChanged();
     }
 

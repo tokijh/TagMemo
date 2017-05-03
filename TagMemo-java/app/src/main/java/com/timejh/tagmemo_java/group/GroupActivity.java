@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.timejh.tagmemo_java.R;
+import com.timejh.tagmemo_java.memo.MemoManageActivity;
 import com.timejh.tagmemo_java.model.Group;
 import com.timejh.tagmemo_java.model.GroupMemo;
 import com.timejh.tagmemo_java.util.Database;
@@ -106,6 +107,12 @@ public class GroupActivity extends AppCompatActivity implements GroupFragment.Li
                 .putExtra("group_id", group_id));
     }
 
+    private void startMemoManager(String parentGroupId, String memo_id) {
+        startActivity(new Intent(this, MemoManageActivity.class)
+                .putExtra("parentGroupId", parentGroupId)
+                .putExtra("memo_id", memo_id));
+    }
+
     @Override
     public void onBackPressed() {
         if (isPopable()) {
@@ -123,7 +130,7 @@ public class GroupActivity extends AppCompatActivity implements GroupFragment.Li
 
     @Override
     public void onClickMemo(String parentGroupId, String memo_id) {
-
+        startMemoManager(parentGroupId, memo_id);
     }
 
     @Override
@@ -133,6 +140,6 @@ public class GroupActivity extends AppCompatActivity implements GroupFragment.Li
 
     @Override
     public void onClickAddMemo(String parentGroupId) {
-
+        startMemoManager(parentGroupId, null);
     }
 }

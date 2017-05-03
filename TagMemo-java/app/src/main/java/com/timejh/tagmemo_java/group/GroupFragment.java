@@ -17,6 +17,7 @@ import com.timejh.tagmemo_java.group.adapter.GroupListAdapter;
 import com.timejh.tagmemo_java.model.Group;
 import com.timejh.tagmemo_java.model.GroupMemo;
 import com.timejh.tagmemo_java.model.HashTag;
+import com.timejh.tagmemo_java.model.Memo;
 
 import io.realm.Realm;
 
@@ -91,9 +92,11 @@ public class GroupFragment extends Fragment implements GroupListAdapter.Callback
     private View.OnClickListener onClickListener = v -> {
         switch (v.getId()) {
             case R.id.fab_edit:
-                Log.e("TAGG", Realm.getDefaultInstance().where(HashTag.class).findAll().toString());
-                Log.e("TAGGA", Realm.getDefaultInstance().where(Group.class).findAll().toString());
-                Log.e("TAGGB", Realm.getDefaultInstance().where(GroupMemo.class).findAll().toString());
+                // Realm 데이터를 보기 위한 임시 로직
+                Log.e("HashTag", Realm.getDefaultInstance().where(HashTag.class).findAll().toString());
+                Log.e("Group", Realm.getDefaultInstance().where(Group.class).findAll().toString());
+                Log.e("GroupMemo", Realm.getDefaultInstance().where(GroupMemo.class).findAll().toString());
+                Log.e("Memo", Realm.getDefaultInstance().where(Memo.class).findAll().toString());
                 break;
             case R.id.fab_add_group:
                 listener.onClickAddGroup(parentGroupId);

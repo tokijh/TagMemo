@@ -15,7 +15,7 @@ import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.jakewharton.rxbinding2.widget.RxTextView;
 import com.timejh.tagmemo_java.R;
-import com.timejh.tagmemo_java.adapter.HasgTagListAdapter;
+import com.timejh.tagmemo_java.adapter.HashTagListAdapter;
 import com.timejh.tagmemo_java.model.Group;
 import com.timejh.tagmemo_java.model.GroupMemo;
 import com.timejh.tagmemo_java.model.HashTag;
@@ -26,7 +26,7 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.realm.Realm;
 import io.realm.RealmList;
 
-public class GroupManageActivity extends AppCompatActivity implements HasgTagListAdapter.Callback {
+public class GroupManageActivity extends AppCompatActivity {
 
     public static final int MODE_CREATE = 0;
     public static final int MODE_VIEW = 1;
@@ -48,7 +48,7 @@ public class GroupManageActivity extends AppCompatActivity implements HasgTagLis
     private FloatingActionButton fab_view_delete, fab_view_edit;
     private FloatingActionButton fab_edit_delete, fab_edit_save, fab_edit_cancel;
 
-    private HasgTagListAdapter hasgTagListAdapter;
+    private HashTagListAdapter hashTagListAdapter;
 
     private CompositeDisposable compositeDisposable;
 
@@ -107,8 +107,8 @@ public class GroupManageActivity extends AppCompatActivity implements HasgTagLis
     }
 
     private void initAdapter() {
-        hasgTagListAdapter = new HasgTagListAdapter(this, this);
-        rv_tag.setAdapter(hasgTagListAdapter);
+        hashTagListAdapter = new HashTagListAdapter(hashTagListAdapterCallback);
+        rv_tag.setAdapter(hashTagListAdapter);
     }
 
     private void initManager() {
@@ -169,12 +169,13 @@ public class GroupManageActivity extends AppCompatActivity implements HasgTagLis
                 .findFirst();
 
         if (group == null) {
-            alertError();
+            Toast.makeText(this, "Error on Loading", Toast.LENGTH_SHORT).show();
+            finish();
             return;
         }
 
         ed_title.setText(group.title);
-        hasgTagListAdapter.set(group.tags);
+        hashTagListAdapter.set(group.tags);
     }
 
     private void modeEdit() {
@@ -230,7 +231,7 @@ public class GroupManageActivity extends AppCompatActivity implements HasgTagLis
         group.title = ed_title.getText().toString();
         group.parentGroupId = this.parentGroupId;
         group.tags = new RealmList<>();
-        for (HashTag hashTag : hasgTagListAdapter.get()) {
+        for (HashTag hashTag : hashTagListAdapter.get()) {
             group.tags.add(saveTag(realm, hashTag.tag));
         }
         group.tags.sort("tag");
@@ -255,7 +256,7 @@ public class GroupManageActivity extends AppCompatActivity implements HasgTagLis
         realm.beginTransaction();
         group.title = ed_title.getText().toString();
         group.tags.clear();
-        for (HashTag hashTag : hasgTagListAdapter.get()) {
+        for (HashTag hashTag : hashTagListAdapter.get()) {
             group.tags.add(saveTag(realm, hashTag.tag));
         }
         group.tags.sort("tag");
@@ -316,7 +317,8 @@ public class GroupManageActivity extends AppCompatActivity implements HasgTagLis
                 .equalTo("tag", tag)
                 .findFirst();
         if (hashTag == null) {
-            hashTag = realm.createObject(HashTag.class, Database.createID(HashTag.class));
+            hashTag = realm.createObject(HashTag.class);
+            hashTag.id = Database.createID(HashTag.class);
             hashTag.tag = tag;
             hashTag.last_date = Database.getCurrentDate();
         }
@@ -329,16 +331,11 @@ public class GroupManageActivity extends AppCompatActivity implements HasgTagLis
         for (String tag : str_actv_tag.split(" ")) {
             HashTag hashTag = new HashTag();
             hashTag.tag = tag;
-            if ("".equals(tag) || hasgTagListAdapter.isContain(hashTag)) {
+            if ("".equals(tag) || hashTagListAdapter.isContain(hashTag)) {
                 continue;
             }
-            hasgTagListAdapter.add(hashTag);
+            hashTagListAdapter.add(hashTag);
         }
-    }
-
-    private void alertError() {
-        Toast.makeText(this, "Error on Loading", Toast.LENGTH_SHORT).show();
-        finish();
     }
 
     private View.OnClickListener onClickListener = v -> {
@@ -369,14 +366,13 @@ public class GroupManageActivity extends AppCompatActivity implements HasgTagLis
         fab_edit.close(true);
     };
 
+    private HashTagListAdapter.Callback hashTagListAdapterCallback = position -> {
+
+    };
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
         compositeDisposable.dispose();
-    }
-
-    @Override
-    public void onItemClicked(int position) {
-
     }
 }
