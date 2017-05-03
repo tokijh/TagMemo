@@ -9,14 +9,13 @@ import io.realm.annotations.PrimaryKey;
  */
 
 public class Memo extends RealmObject {
-    @PrimaryKey
+
     public String id;
 
     public String parentId;
     public String title;
     public String content;
     public RealmList<HashTag> tags;
-    public long position;
 
     public String last_date;
     public boolean isValidated;

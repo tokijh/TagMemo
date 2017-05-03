@@ -33,6 +33,7 @@ public class GroupManageActivity extends AppCompatActivity implements HasgTagLis
     public static final int MODE_EDIT = 2;
 
     private int mode;
+    private String parentGroupId;
     private String group_id;
 
     private EditText ed_title;
@@ -76,6 +77,9 @@ public class GroupManageActivity extends AppCompatActivity implements HasgTagLis
         if (bundle != null) {
             if (bundle.containsKey("mode")) {
                 this.mode = bundle.getInt("mode");
+                if (bundle.containsKey("parentGroupId")) {
+                    this.parentGroupId = bundle.getString("parentGroupId");
+                }
                 if (bundle.containsKey("group_id")) {
                     this.group_id = bundle.getString("group_id");
                 }
@@ -207,7 +211,7 @@ public class GroupManageActivity extends AppCompatActivity implements HasgTagLis
                 break;
         }
 
-        saveGroupMemo(group);
+        refleshParentGroup(saveGroupMemo(group));
         this.group_id = group.id;
 
         Dialog.dismiss();
@@ -220,17 +224,18 @@ public class GroupManageActivity extends AppCompatActivity implements HasgTagLis
 
         realm.beginTransaction();
 
-        Group group = realm.createObject(Group.class, Database.createID(Group.class));
+        Group group = realm.createObject(Group.class);
 
-        group.last_date = Database.getCurrentDate();
+        group.id = Database.createID(Group.class);
         group.title = ed_title.getText().toString();
-        group.parentId = this.group_id;
+        group.parentGroupId = this.parentGroupId;
         group.tags = new RealmList<>();
         for (HashTag hashTag : hasgTagListAdapter.get()) {
             group.tags.add(saveTag(realm, hashTag.tag));
         }
         group.tags.sort("tag");
-        group.position = realm.where(Group.class).max("position").longValue() + 1;
+        group.isValidated = false;
+        group.last_date = Database.getCurrentDate();
 
         realm.commitTransaction();
         return group;
@@ -242,35 +247,66 @@ public class GroupManageActivity extends AppCompatActivity implements HasgTagLis
         Group group = realm.where(Group.class)
                 .equalTo("id", group_id)
                 .findFirst();
-        if (group == null) {
-            createGroup();
-            return null;
+        if (group == null) { // CREATE 로 전환
+            mode = MODE_CREATE;
+            return createGroup();
         }
 
         realm.beginTransaction();
-
-        group.last_date = Database.getCurrentDate();
         group.title = ed_title.getText().toString();
         group.tags.clear();
         for (HashTag hashTag : hasgTagListAdapter.get()) {
             group.tags.add(saveTag(realm, hashTag.tag));
         }
+        group.tags.sort("tag");
+        group.isValidated = false;
+        group.last_date = Database.getCurrentDate();
 
         realm.commitTransaction();
 
         return group;
     }
 
-    private void saveGroupMemo(Group group) {
+    private GroupMemo saveGroupMemo(Group group) {
         Realm realm = Realm.getDefaultInstance();
+
+        GroupMemo groupMemo = realm.where(GroupMemo.class)
+                .equalTo("type_id", group.id)
+                .findFirst();
+        realm.beginTransaction();
+        if (groupMemo == null) {
+            groupMemo = realm.createObject(GroupMemo.class);
+            groupMemo.id = Database.createID(GroupMemo.class);
+            groupMemo.parentGroupId = this.parentGroupId;
+            groupMemo.type_id = group.id;
+            groupMemo.group = group;
+        }
+        groupMemo.type = GroupMemo.TYPE_GROUP;
+        groupMemo.isValidated = false;
+        groupMemo.last_date = Database.getCurrentDate();
+
+        realm.commitTransaction();
+
+        return groupMemo;
+    }
+
+    /**
+     * 부모의 Group의 GroupMemo를 갱신한다.
+     *
+     * @param groupMemo
+     */
+    private void refleshParentGroup(GroupMemo groupMemo) {
+        Realm realm = Realm.getDefaultInstance();
+
+        Group group = realm.where(Group.class)
+                .equalTo("id", groupMemo.parentGroupId)
+                .findFirst();
+
         realm.beginTransaction();
 
-        GroupMemo groupMemo = realm.createObject(GroupMemo.class, Database.createID(GroupMemo.class));
-        groupMemo.last_date = Database.getCurrentDate();
-        groupMemo.parentId = this.group_id;
-        groupMemo.group = group;
-        groupMemo.position = realm.where(GroupMemo.class).equalTo("parentId", group_id).max("position").longValue() + 1;
-        groupMemo.type = GroupMemo.TYPE_GROUP;
+        if (!group.groupMemos.contains(groupMemo)) {
+            group.groupMemos.add(groupMemo);
+        }
 
         realm.commitTransaction();
     }

@@ -12,14 +12,13 @@ public class GroupMemo extends RealmObject {
     public static final int TYPE_GROUP = 0;
     public static final int TYPE_MEMO = 1;
 
-    @PrimaryKey
     public String id;
 
     public int type;
-    public String parentId;
+    public String parentGroupId;
+    public String type_id; // TYPE에 맞는 ID(Group 또는 Memo)
     public Group group;
     public Memo memo;
-    public long position;
 
     public String last_date;
     public boolean isValidated;

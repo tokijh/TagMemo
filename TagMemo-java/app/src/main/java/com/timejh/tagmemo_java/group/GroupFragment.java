@@ -33,10 +33,10 @@ public class GroupFragment extends Fragment implements GroupListAdapter.Callback
 
     private Listener listener;
 
-    private String group_id;
+    private String parentGroupId;
 
-    public GroupFragment(String group_id) {
-        this.group_id = group_id;
+    public GroupFragment(String parentGroupId) {
+        this.parentGroupId = parentGroupId;
     }
 
     @Override
@@ -69,11 +69,11 @@ public class GroupFragment extends Fragment implements GroupListAdapter.Callback
 
     private void initAdapter() {
         groupListAdapter = new GroupListAdapter(
-                getContext(),
                 Realm.getDefaultInstance()
-                        .where(GroupMemo.class)
-                        .equalTo("parentId", group_id)
-                        .findAllSorted("position"),
+                        .where(Group.class)
+                        .equalTo("id", parentGroupId)
+                        .findFirst()
+                        .groupMemos,
                 this);
         rv_groupmemo.setAdapter(groupListAdapter);
     }
@@ -96,10 +96,10 @@ public class GroupFragment extends Fragment implements GroupListAdapter.Callback
                 Log.e("TAGGB", Realm.getDefaultInstance().where(GroupMemo.class).findAll().toString());
                 break;
             case R.id.fab_add_group:
-                listener.onClickAddGroup(group_id);
+                listener.onClickAddGroup(parentGroupId);
                 break;
             case R.id.fab_add_memo:
-                listener.onClickAddMemo(group_id);
+                listener.onClickAddMemo(parentGroupId);
                 break;
         }
         fab.close(true);
@@ -125,22 +125,22 @@ public class GroupFragment extends Fragment implements GroupListAdapter.Callback
     @Override
     public void onGroupClicked(int position) {
         GroupMemo groupMemo = groupListAdapter.get(position);
-        listener.onClickGroup(groupMemo.group.id);
+        listener.onClickGroup(parentGroupId, groupMemo.group.id);
     }
 
     @Override
     public void onMemoClicked(int position) {
         GroupMemo groupMemo = groupListAdapter.get(position);
-        listener.onClickMemo(groupMemo.memo.id);
+        listener.onClickMemo(parentGroupId, groupMemo.memo.id);
     }
 
     public interface Listener {
-        void onClickGroup(String group_id);
+        void onClickGroup(String parentGroupId, String group_id);
 
-        void onClickMemo(String memo_id);
+        void onClickMemo(String parentGroupId, String memo_id);
 
-        void onClickAddGroup(String group_id);
+        void onClickAddGroup(String parentGroupId);
 
-        void onClickAddMemo(String group_id);
+        void onClickAddMemo(String parentGroupId);
     }
 }

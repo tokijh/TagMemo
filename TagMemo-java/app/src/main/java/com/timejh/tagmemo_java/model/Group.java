@@ -9,14 +9,13 @@ import io.realm.annotations.PrimaryKey;
  */
 
 public class Group extends RealmObject {
-    @PrimaryKey
+
     public String id;
 
-    public String parentId;
+    public String parentGroupId;
     public String title;
     public RealmList<HashTag> tags;
     public RealmList<GroupMemo> groupMemos;
-    public long position;
 
     public String last_date;
     public boolean isValidated;

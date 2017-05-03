@@ -8,7 +8,7 @@ import io.realm.annotations.PrimaryKey;
  */
 
 public class HashTag extends RealmObject {
-    @PrimaryKey
+
     public String id;
 
     public String tag;
