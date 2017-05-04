@@ -107,8 +107,9 @@ public class GroupActivity extends AppCompatActivity implements GroupFragment.Li
                 .putExtra("group_id", group_id));
     }
 
-    private void startMemoManager(String parentGroupId, String memo_id) {
+    private void startMemoManager(int mode, String parentGroupId, String memo_id) {
         startActivity(new Intent(this, MemoManageActivity.class)
+                .putExtra("mode", mode)
                 .putExtra("parentGroupId", parentGroupId)
                 .putExtra("memo_id", memo_id));
     }
@@ -130,7 +131,7 @@ public class GroupActivity extends AppCompatActivity implements GroupFragment.Li
 
     @Override
     public void onClickMemo(String parentGroupId, String memo_id) {
-        startMemoManager(parentGroupId, memo_id);
+        startMemoManager(MemoManageActivity.MODE_EDIT, parentGroupId, memo_id);
     }
 
     @Override
@@ -140,6 +141,6 @@ public class GroupActivity extends AppCompatActivity implements GroupFragment.Li
 
     @Override
     public void onClickAddMemo(String parentGroupId) {
-        startMemoManager(parentGroupId, null);
+        startMemoManager(MemoManageActivity.MODE_CREATE, parentGroupId, null);
     }
 }

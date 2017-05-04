@@ -32,6 +32,9 @@ import io.realm.RealmList;
 
 public class MemoManageActivity extends AppCompatActivity {
 
+    public static final int MODE_CREATE = 0;
+    public static final int MODE_EDIT = 1;
+
     private String parentGroupId = null;
     private String memo_id = null;
     private Memo memo = null;
@@ -74,12 +77,38 @@ public class MemoManageActivity extends AppCompatActivity {
     private void initIntentValue() {
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
-            if (bundle.containsKey("parentGroupId")) {
-                this.parentGroupId = bundle.getString("parentGroupId");
+            if (bundle.containsKey("mode")) {
+                switch (bundle.getInt("mode")) {
+                    case MODE_CREATE:
+                        initIntentValueCreate(bundle);
+                        break;
+                    case MODE_EDIT:
+                        initIntentValueEdit(bundle);
+                        break;
+                }
             }
-            if (bundle.containsKey("memo_id")) {
-                this.memo_id = bundle.getString("memo_id");
-            }
+        }
+    }
+
+    private void initIntentValueCreate(Bundle bundle) {
+        if (bundle.containsKey("parentGroupId")) {
+            this.parentGroupId = bundle.getString("parentGroupId");
+        }
+        Realm realm = Realm.getDefaultInstance();
+        Group group = realm.where(Group.class)
+                .equalTo("id", this.parentGroupId)
+                .findFirst();
+        if (group != null) {
+            hashTagListAdapter.set(group.tags);
+        }
+    }
+
+    private void initIntentValueEdit(Bundle bundle) {
+        if (bundle.containsKey("parentGroupId")) {
+            this.parentGroupId = bundle.getString("parentGroupId");
+        }
+        if (bundle.containsKey("memo_id")) {
+            this.memo_id = bundle.getString("memo_id");
         }
     }
 
