@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">TagMemo-java</string>
+    
+    <string name="toolbar_title">TagMemo</string>
 </resources>

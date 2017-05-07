@@ -6,6 +6,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.timejh.tagmemo_java.R;
 import com.timejh.tagmemo_java.memo.MemoManageActivity;
@@ -29,16 +31,17 @@ public class GroupActivity extends AppCompatActivity implements GroupFragment.Li
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group);
 
-        initView();
+        initToolbar();
 
         initFragmentSettings();
 
         initRootGroup();
     }
 
-    private void initView() {
+    private void initToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolBar);
         setSupportActionBar(toolbar);
+        toolbar.inflateMenu(R.menu.list_groupmemo);
     }
 
     private void initFragmentSettings() {
@@ -57,6 +60,7 @@ public class GroupActivity extends AppCompatActivity implements GroupFragment.Li
 
             Group group = realm.createObject(Group.class);
             group.id = "/";
+            group.title = "모든 메모";
             group.isValidated = false;
             group.last_date = Database.getCurrentDate();
 
@@ -123,6 +127,22 @@ public class GroupActivity extends AppCompatActivity implements GroupFragment.Li
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPress();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.list_groupmemo, menu); // Inflate Menu
+        return true;
+    }
+
+    @Override
     public void onBackPressed() {
         if (isPopable()) {
             popshowContentFragment();
@@ -150,5 +170,10 @@ public class GroupActivity extends AppCompatActivity implements GroupFragment.Li
     @Override
     public void onClickAddMemo(String parentGroupId) {
         startMemoManager(MemoManageActivity.MODE_CREATE, parentGroupId, null);
+    }
+
+    @Override
+    public void onBackPress() {
+        onBackPressed();
     }
 }

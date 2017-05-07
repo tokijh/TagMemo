@@ -3,9 +3,11 @@ package com.timejh.tagmemo_java.group;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,6 +38,7 @@ public class GroupFragment extends Fragment implements GroupListAdapter.Callback
     private Listener listener;
 
     private String parentGroupId;
+    private Group group;
 
     public GroupFragment(String parentGroupId) {
         this.parentGroupId = parentGroupId;
@@ -49,6 +52,8 @@ public class GroupFragment extends Fragment implements GroupListAdapter.Callback
         }
         view = inflater.inflate(R.layout.fragment_group, container, false);
 
+        initGroup();
+
         initView();
 
         initAdapter();
@@ -58,6 +63,13 @@ public class GroupFragment extends Fragment implements GroupListAdapter.Callback
         initListener();
 
         return view;
+    }
+
+    private void initGroup() {
+        this.group = Realm.getDefaultInstance()
+                .where(Group.class)
+                .equalTo("id", parentGroupId)
+                .findFirst();
     }
 
     private void initView() {
@@ -71,11 +83,7 @@ public class GroupFragment extends Fragment implements GroupListAdapter.Callback
 
     private void initAdapter() {
         groupListAdapter = new GroupListAdapter(
-                Realm.getDefaultInstance()
-                        .where(Group.class)
-                        .equalTo("id", parentGroupId)
-                        .findFirst()
-                        .groupMemos,
+                this.group.groupMemos,
                 this);
         rv_groupmemo.setAdapter(groupListAdapter);
     }
@@ -90,6 +98,35 @@ public class GroupFragment extends Fragment implements GroupListAdapter.Callback
         fab_edit.setOnClickListener(onClickListener);
         fab_add_group.setOnClickListener(onClickListener);
         fab_add_memo.setOnClickListener(onClickListener);
+    }
+
+    private void initToolbar() {
+        AppCompatActivity activity = ((AppCompatActivity) getActivity());
+        Toolbar toolbar = (Toolbar) activity.findViewById(R.id.toolBar);
+        toolbar.setOnMenuItemClickListener(onMenuItemClickListener);
+
+        // Set default title in toolbar
+        if (group.parentGroupId != null) {
+            toolbar.setTitle(this.group.title);
+            activity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        } else {
+            toolbar.setTitle(R.string.toolbar_title);
+            activity.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        }
+
+        // TODO use SearchView
+//        SearchView searchView = (SearchView) toolbar.getMenu().findItem(R.id.menu_search).getActionView();
+//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+//            @Override
+//            public boolean onQueryTextSubmit(String query) {
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean onQueryTextChange(String newText) {
+//                return false;
+//            }
+//        });
     }
 
     private View.OnClickListener onClickListener = v -> {
@@ -110,6 +147,25 @@ public class GroupFragment extends Fragment implements GroupListAdapter.Callback
         }
         fab.close(true);
     };
+
+    private Toolbar.OnMenuItemClickListener onMenuItemClickListener = (item) -> {
+        switch (item.getItemId()) {
+            case R.id.add_folder:
+                break;
+            case R.id.add_memo:
+                break;
+            case R.id.edit:
+                break;
+        }
+        return true;
+    };
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        initToolbar();
+    }
 
     @Override
     public void onAttach(Context context) {
@@ -148,5 +204,7 @@ public class GroupFragment extends Fragment implements GroupListAdapter.Callback
         void onClickAddGroup(String parentGroupId);
 
         void onClickAddMemo(String parentGroupId);
+
+        void onBackPress();
     }
 }
