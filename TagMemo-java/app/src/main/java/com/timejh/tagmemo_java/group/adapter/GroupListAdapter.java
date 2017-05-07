@@ -1,5 +1,6 @@
 package com.timejh.tagmemo_java.group.adapter;
 
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.timejh.tagmemo_java.R;
+import com.timejh.tagmemo_java.adapter.HashTagListAdapter;
 import com.timejh.tagmemo_java.model.Group;
 import com.timejh.tagmemo_java.model.GroupMemo;
 import com.timejh.tagmemo_java.model.Memo;
@@ -37,6 +39,12 @@ public class GroupListAdapter extends RealmRecyclerViewAdapter {
         holder.group_id = group.id;
         holder.tv_title.setText(group.title);
         holder.tv_content_count.setText(group.groupMemos.size() + "");
+        if (group.tags.size() > 0) {
+            holder.rv_tag.setVisibility(View.VISIBLE);
+            holder.hashTagListAdapter.set(group.tags);
+        } else {
+            holder.rv_tag.setVisibility(View.GONE);
+        }
     }
 
     private void setItemMemo(MemoHolder holder, int position) {
@@ -44,6 +52,12 @@ public class GroupListAdapter extends RealmRecyclerViewAdapter {
 
         holder.position = position;
         holder.tv_title.setText(memo.title);
+        if (memo.tags.size() > 0) {
+            holder.rv_tag.setVisibility(View.VISIBLE);
+            holder.hashTagListAdapter.set(memo.tags);
+        } else {
+            holder.rv_tag.setVisibility(View.GONE);
+        }
     }
 
     public GroupMemo get(int position) {
@@ -91,11 +105,18 @@ public class GroupListAdapter extends RealmRecyclerViewAdapter {
 
         TextView tv_title;
         TextView tv_content_count;
+        RecyclerView rv_tag;
+
+        HashTagListAdapter hashTagListAdapter;
 
         public GroupHolder(View itemView) {
             super(itemView);
 
             initView();
+
+            initAdapter();
+
+            initManager();
 
             initListener();
         }
@@ -103,13 +124,27 @@ public class GroupListAdapter extends RealmRecyclerViewAdapter {
         private void initView() {
             tv_title = (TextView) itemView.findViewById(R.id.tv_title);
             tv_content_count = (TextView) itemView.findViewById(R.id.tv_content_count);
+            rv_tag = (RecyclerView) itemView.findViewById(R.id.rv_tag);
         }
 
         private void initListener() {
             itemView.setOnClickListener(groupClickListener);
         }
 
+        private void initAdapter() {
+            hashTagListAdapter = new HashTagListAdapter(hashTahCallback);
+            rv_tag.setAdapter(hashTagListAdapter);
+        }
+
+        private void initManager() {
+            rv_tag.setLayoutManager(new LinearLayoutManager(itemView.getContext(), LinearLayoutManager.HORIZONTAL, false));
+        }
+
         View.OnClickListener groupClickListener =  v -> callback.onGroupClicked(position);
+
+        HashTagListAdapter.Callback hashTahCallback = position -> {
+
+        };
     }
 
     class MemoHolder extends RecyclerView.ViewHolder {
@@ -117,24 +152,46 @@ public class GroupListAdapter extends RealmRecyclerViewAdapter {
         int position;
 
         TextView tv_title;
+        RecyclerView rv_tag;
+
+        HashTagListAdapter hashTagListAdapter;
 
         public MemoHolder(View itemView) {
             super(itemView);
 
             initView();
 
+            initAdapter();
+
+            initManager();
+
             initListener();
         }
 
         private void initView() {
             tv_title = (TextView) itemView.findViewById(R.id.tv_title);
+            rv_tag = (RecyclerView) itemView.findViewById(R.id.rv_tag);
         }
 
         private void initListener() {
             itemView.setOnClickListener(memoClickListener);
         }
 
+        private void initAdapter() {
+            hashTagListAdapter = new HashTagListAdapter(hashTahCallback);
+            rv_tag.setAdapter(hashTagListAdapter);
+        }
+
+        private void initManager() {
+            rv_tag.setLayoutManager(new LinearLayoutManager(itemView.getContext(), LinearLayoutManager.HORIZONTAL, false));
+        }
+
         View.OnClickListener memoClickListener =  v -> callback.onMemoClicked(position);
+
+
+        HashTagListAdapter.Callback hashTahCallback = position -> {
+
+        };
     }
 
     public interface Callback {

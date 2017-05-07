@@ -3,6 +3,7 @@ package com.timejh.tagmemo_java.group;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -80,7 +81,9 @@ public class GroupFragment extends Fragment implements GroupListAdapter.Callback
     }
 
     private void initManager() {
-        rv_groupmemo.setLayoutManager(new LinearLayoutManager(getContext()));
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+        rv_groupmemo.setLayoutManager(linearLayoutManager);
+        rv_groupmemo.addItemDecoration(new DividerItemDecoration(getContext(), linearLayoutManager.getOrientation()));
     }
 
     private void initListener() {

@@ -121,51 +121,25 @@
 
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginBottom="10dp"
-        android:layout_marginRight="15dp"
-        fab:menu_colorNormal="#1565C0"
-        fab:menu_colorPressed="#2272CD"
-        fab:menu_colorRipple="#62B2FF">
+        style="@style/FloatStyle.Menu">
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fab_gallery"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="5dp"
             fab:fab_label="Add gallery"
-            fab:fab_size="mini"
-            fab:fab_colorNormal="#1565C0"
-            fab:fab_colorPressed="#2272CD"
-            fab:fab_colorRipple="#62B2FF"
+            style="@style/FloatStyle.Button"
             android:src="@android:drawable/ic_menu_gallery" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fab_camera"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="5dp"
             android:src="@android:drawable/ic_menu_camera"
             fab:fab_label="Add camera"
-            fab:fab_size="mini"
-            fab:fab_colorNormal="#1565C0"
-            fab:fab_colorPressed="#2272CD"
-            fab:fab_colorRipple="#62B2FF" />
+            style="@style/FloatStyle.Button" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fab_delete"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="5dp"
             android:src="@android:drawable/ic_menu_delete"
             fab:fab_label="Remove"
-            fab:fab_size="mini"
-            fab:fab_colorNormal="#1565C0"
-            fab:fab_colorPressed="#2272CD"
-            fab:fab_colorRipple="#62B2FF" />
+            style="@style/FloatStyle.Button" />
 
     </com.github.clans.fab.FloatingActionMenu>
 

@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 
 import com.timejh.tagmemo_java.R;
 import com.timejh.tagmemo_java.memo.MemoManageActivity;
@@ -28,9 +29,16 @@ public class GroupActivity extends AppCompatActivity implements GroupFragment.Li
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group);
 
+        initView();
+
         initFragmentSettings();
 
         initRootGroup();
+    }
+
+    private void initView() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolBar);
+        setSupportActionBar(toolbar);
     }
 
     private void initFragmentSettings() {

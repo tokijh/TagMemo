@@ -90,85 +90,39 @@
 
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/fab_edit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginBottom="10dp"
-        android:layout_marginRight="15dp"
-        fab:menu_colorNormal="#1565C0"
-        fab:menu_colorPressed="#2272CD"
-        fab:menu_colorRipple="#62B2FF">
+        style="@style/FloatStyle.Menu">
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fab_edit_delete"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="5dp"
             android:src="@android:drawable/ic_menu_delete"
-            fab:fab_size="mini"
-            fab:fab_colorNormal="#1565C0"
-            fab:fab_colorPressed="#2272CD"
-            fab:fab_colorRipple="#62B2FF" />
+            style="@style/FloatStyle.Button" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fab_edit_save"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="5dp"
             android:src="@android:drawable/ic_menu_save"
-            fab:fab_size="mini"
-            fab:fab_colorNormal="#1565C0"
-            fab:fab_colorPressed="#2272CD"
-            fab:fab_colorRipple="#62B2FF" />
+            style="@style/FloatStyle.Button" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fab_edit_cancel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="5dp"
             android:src="@android:drawable/ic_menu_close_clear_cancel"
-            fab:fab_size="mini"
-            fab:fab_colorNormal="#1565C0"
-            fab:fab_colorPressed="#2272CD"
-            fab:fab_colorRipple="#62B2FF" />
+            style="@style/FloatStyle.Button" />
 
     </com.github.clans.fab.FloatingActionMenu>
 
 
     <com.github.clans.fab.FloatingActionMenu
         android:id="@+id/fab_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginBottom="10dp"
-        android:layout_marginRight="15dp"
-        fab:menu_colorNormal="#1565C0"
-        fab:menu_colorPressed="#2272CD"
-        fab:menu_colorRipple="#62B2FF">
+        style="@style/FloatStyle.Menu">
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fab_view_delete"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="5dp"
             android:src="@android:drawable/ic_menu_delete"
-            fab:fab_size="mini"
-            fab:fab_colorNormal="#1565C0"
-            fab:fab_colorPressed="#2272CD"
-            fab:fab_colorRipple="#62B2FF" />
+            style="@style/FloatStyle.Button" />
 
         <com.github.clans.fab.FloatingActionButton
             android:id="@+id/fab_view_edit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="5dp"
             android:src="@android:drawable/ic_menu_edit"
-            fab:fab_size="mini"
-            fab:fab_colorNormal="#1565C0"
-            fab:fab_colorPressed="#2272CD"
-            fab:fab_colorRipple="#62B2FF" />
+            style="@style/FloatStyle.Button" />
 
     </com.github.clans.fab.FloatingActionMenu>
 
