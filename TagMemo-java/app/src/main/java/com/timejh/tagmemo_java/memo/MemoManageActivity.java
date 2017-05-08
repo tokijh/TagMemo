@@ -349,13 +349,20 @@ public class MemoManageActivity extends AppCompatActivity {
         switch (v.getId()) {
             case R.id.bt_tag_add:
                 addTag();
-                saveAfterCheck();
                 break;
         }
     };
 
-    private HashTagListAdapter.Callback hashTagListAdapterCallback = position -> {
+    private HashTagListAdapter.Callback hashTagListAdapterCallback = new HashTagListAdapter.Callback() {
+        @Override
+        public void onItemClicked(int position) {
+            hashTagListAdapter.remove(position);
+        }
 
+        @Override
+        public void onDataChanged() {
+            saveAfterCheck();
+        }
     };
 
     @Override

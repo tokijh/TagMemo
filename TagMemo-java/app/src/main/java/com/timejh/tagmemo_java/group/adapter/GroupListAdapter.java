@@ -11,6 +11,7 @@ import com.timejh.tagmemo_java.R;
 import com.timejh.tagmemo_java.adapter.HashTagListAdapter;
 import com.timejh.tagmemo_java.model.Group;
 import com.timejh.tagmemo_java.model.GroupMemo;
+import com.timejh.tagmemo_java.model.HashTag;
 import com.timejh.tagmemo_java.model.Memo;
 
 import io.realm.OrderedRealmCollection;
@@ -142,8 +143,16 @@ public class GroupListAdapter extends RealmRecyclerViewAdapter {
 
         View.OnClickListener groupClickListener =  v -> callback.onGroupClicked(position);
 
-        HashTagListAdapter.Callback hashTahCallback = position -> {
+        HashTagListAdapter.Callback hashTahCallback = new HashTagListAdapter.Callback() {
+            @Override
+            public void onItemClicked(int position) {
+                hashTagListAdapter.remove(position);
+            }
 
+            @Override
+            public void onDataChanged() {
+
+            }
         };
     }
 
@@ -188,9 +197,16 @@ public class GroupListAdapter extends RealmRecyclerViewAdapter {
 
         View.OnClickListener memoClickListener =  v -> callback.onMemoClicked(position);
 
+        HashTagListAdapter.Callback hashTahCallback = new HashTagListAdapter.Callback() {
+            @Override
+            public void onItemClicked(int position) {
+                hashTagListAdapter.remove(position);
+            }
 
-        HashTagListAdapter.Callback hashTahCallback = position -> {
+            @Override
+            public void onDataChanged() {
 
+            }
         };
     }
 

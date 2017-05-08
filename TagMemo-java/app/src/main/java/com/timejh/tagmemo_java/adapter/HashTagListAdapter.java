@@ -26,25 +26,25 @@ public class HashTagListAdapter extends RecyclerView.Adapter {
 
     public HashTagListAdapter(Callback callback) {
         this.callback = callback;
-
         hashTags = new ArrayList<>();
     }
 
     public void add(HashTag hashTag) {
         hashTags.add(hashTag);
-        this.notifyDataSetChanged();
+        notifyDataChanged();
     }
 
     public void set(List<HashTag> hashTags) {
         this.hashTags.clear();
         for (HashTag hashTag : hashTags) {
-            add(hashTag);
+            this.hashTags.add(hashTag);
         }
+        notifyDataChanged();
     }
 
     public void remove(int position) {
         hashTags.remove(position);
-        this.notifyDataSetChanged();
+        notifyDataChanged();
     }
 
     public void sort() {
@@ -53,7 +53,7 @@ public class HashTagListAdapter extends RecyclerView.Adapter {
         } else {
             Collections.sort(hashTags, (o1, o2) -> o1.tag.compareTo(o2.tag));
         }
-        this.notifyDataSetChanged();
+        notifyDataChanged();
     }
 
     public List<HashTag> get() {
@@ -118,7 +118,13 @@ public class HashTagListAdapter extends RecyclerView.Adapter {
         private View.OnClickListener itemHashTagClickListener = v -> callback.onItemClicked(position);
     }
 
+    private void notifyDataChanged() {
+        callback.onDataChanged();
+        this.notifyDataSetChanged();
+    }
+
     public interface Callback {
         void onItemClicked(int position);
+        void onDataChanged();
     }
 }

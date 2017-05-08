@@ -366,8 +366,17 @@ public class GroupManageActivity extends AppCompatActivity {
         fab_edit.close(true);
     };
 
-    private HashTagListAdapter.Callback hashTagListAdapterCallback = position -> {
+    private HashTagListAdapter.Callback hashTagListAdapterCallback = new HashTagListAdapter.Callback() {
 
+        @Override
+        public void onItemClicked(int position) {
+            hashTagListAdapter.remove(position);
+        }
+
+        @Override
+        public void onDataChanged() {
+
+        }
     };
 
     @Override
