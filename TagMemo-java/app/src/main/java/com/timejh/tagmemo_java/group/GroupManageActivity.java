@@ -1,5 +1,6 @@
 package com.timejh.tagmemo_java.group;
 
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
@@ -8,11 +9,8 @@ import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.github.clans.fab.FloatingActionButton;
-import com.github.clans.fab.FloatingActionMenu;
 import com.jakewharton.rxbinding2.widget.RxTextView;
 import com.timejh.tagmemo_java.R;
 import com.timejh.tagmemo_java.adapter.HashTagListAdapter;
@@ -20,7 +18,8 @@ import com.timejh.tagmemo_java.model.Group;
 import com.timejh.tagmemo_java.model.GroupMemo;
 import com.timejh.tagmemo_java.model.HashTag;
 import com.timejh.tagmemo_java.util.Database;
-import com.timejh.tagmemo_java.util.Dialog;
+
+import java.util.List;
 
 import io.reactivex.disposables.CompositeDisposable;
 import io.realm.Realm;
@@ -29,24 +28,17 @@ import io.realm.RealmList;
 public class GroupManageActivity extends AppCompatActivity {
 
     public static final int MODE_CREATE = 0;
-    public static final int MODE_VIEW = 1;
-    public static final int MODE_EDIT = 2;
+    public static final int MODE_EDIT = 1;
 
-    private int mode;
-    private String parentGroupId;
-    private String group_id;
+    private String parentGroupId = null;
+    private String group_id = null;
+    private Group group = null;
+    private GroupMemo groupMemo = null;
 
     private EditText ed_title;
     private AutoCompleteTextView actv_tag;
-    private LinearLayout layout_tag_add;
     private Button bt_tag_add;
     private RecyclerView rv_tag;
-
-    private FloatingActionMenu fab_view;
-    private FloatingActionMenu fab_edit;
-
-    private FloatingActionButton fab_view_delete, fab_view_edit;
-    private FloatingActionButton fab_edit_delete, fab_edit_save, fab_edit_cancel;
 
     private HashTagListAdapter hashTagListAdapter;
 
@@ -65,45 +57,56 @@ public class GroupManageActivity extends AppCompatActivity {
 
         initListener();
 
-        initObserable();
-
         initIntentValue();
 
-        setMode();
+        initValue();
+
+        initObserable();
     }
 
     private void initIntentValue() {
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
             if (bundle.containsKey("mode")) {
-                this.mode = bundle.getInt("mode");
-                if (bundle.containsKey("parentGroupId")) {
-                    this.parentGroupId = bundle.getString("parentGroupId");
+                switch (bundle.getInt("mode")) {
+                    case MODE_CREATE:
+                        initIntentValueCreate(bundle);
+                        break;
+                    case MODE_EDIT:
+                        initIntentValueEdit(bundle);
+                        break;
                 }
-                if (bundle.containsKey("group_id")) {
-                    this.group_id = bundle.getString("group_id");
-                }
-                return;
             }
         }
-        this.mode = MODE_CREATE;
+    }
+
+    private void initIntentValueCreate(Bundle bundle) {
+        if (bundle.containsKey("parentGroupId")) {
+            this.parentGroupId = bundle.getString("parentGroupId");
+        }
+        Realm realm = Realm.getDefaultInstance();
+        Group group = realm.where(Group.class)
+                .equalTo("id", this.parentGroupId)
+                .findFirst();
+        if (group != null) {
+            hashTagListAdapter.set(group.tags);
+        }
+    }
+
+    private void initIntentValueEdit(Bundle bundle) {
+        if (bundle.containsKey("parentGroupId")) {
+            this.parentGroupId = bundle.getString("parentGroupId");
+        }
+        if (bundle.containsKey("group_id")) {
+            this.group_id = bundle.getString("group_id");
+        }
     }
 
     private void initView() {
         ed_title = (EditText) findViewById(R.id.ed_title);
         actv_tag = (AutoCompleteTextView) findViewById(R.id.actv_tag);
-        layout_tag_add = (LinearLayout) findViewById(R.id.layout_tag_add);
         bt_tag_add = (Button) findViewById(R.id.bt_tag_add);
         rv_tag = (RecyclerView) findViewById(R.id.rv_tag);
-
-        fab_view = (FloatingActionMenu) findViewById(R.id.fab_view);
-        fab_edit = (FloatingActionMenu) findViewById(R.id.fab_edit);
-
-        fab_view_delete = (FloatingActionButton) findViewById(R.id.fab_view_delete);
-        fab_view_edit = (FloatingActionButton) findViewById(R.id.fab_view_edit);
-        fab_edit_delete = (FloatingActionButton) findViewById(R.id.fab_edit_delete);
-        fab_edit_save = (FloatingActionButton) findViewById(R.id.fab_edit_save);
-        fab_edit_cancel = (FloatingActionButton) findViewById(R.id.fab_edit_cancel);
     }
 
     private void initAdapter() {
@@ -117,11 +120,6 @@ public class GroupManageActivity extends AppCompatActivity {
 
     private void initListener() {
         bt_tag_add.setOnClickListener(onClickListener);
-        fab_view_delete.setOnClickListener(onClickListener);
-        fab_view_edit.setOnClickListener(onClickListener);
-        fab_edit_delete.setOnClickListener(onClickListener);
-        fab_edit_save.setOnClickListener(onClickListener);
-        fab_edit_cancel.setOnClickListener(onClickListener);
     }
 
     private void initObserable() {
@@ -132,37 +130,25 @@ public class GroupManageActivity extends AppCompatActivity {
                         .map(t -> t.text().length() > 0)
                         .subscribe(bt_tag_add::setEnabled)
         );
+
+        compositeDisposable.add(
+                RxTextView.textChanges(ed_title)
+                        .map(t -> parentGroupId != null)
+                        .subscribe(result -> {
+                            if (result) {
+                                saveAfterCheck();
+                            }
+                        })
+        );
     }
 
-    private void setMode() {
-        switch (this.mode) {
-            case MODE_CREATE:
-                modeCreate();
-                break;
-            case MODE_VIEW:
-                modeView();
-                break;
-            case MODE_EDIT:
-                modeEdit();
-                break;
-            default: throw new RuntimeException("There is no support mode");
+    private void initValue() {
+        if (group_id != null && !"".equals(group_id)) {
+            modeEdit();
         }
     }
 
-    private void modeCreate() {
-        fab_view.setVisibility(View.GONE);
-        fab_edit.setVisibility(View.VISIBLE);
-        fab_edit_delete.setVisibility(View.GONE);
-        layout_tag_add.setVisibility(View.VISIBLE);
-        ed_title.setEnabled(true);
-    }
-
-    private void modeView() {
-        fab_view.setVisibility(View.VISIBLE);
-        fab_edit.setVisibility(View.GONE);
-        layout_tag_add.setVisibility(View.GONE);
-        ed_title.setEnabled(false);
-
+    private void modeEdit() {
         Group group = Realm.getDefaultInstance()
                 .where(Group.class)
                 .equalTo("id", group_id)
@@ -174,121 +160,110 @@ public class GroupManageActivity extends AppCompatActivity {
             return;
         }
 
-        ed_title.setText(group.title);
-        hashTagListAdapter.set(group.tags);
+        this.group = group;
+
+        ed_title.setText(this.group.title);
+        hashTagListAdapter.set(this.group.tags);
     }
 
-    private void modeEdit() {
-        modeView();
+    private void save(@Nullable String title, @Nullable List<HashTag> tags) {
+        Realm realm = Realm.getDefaultInstance();
+        if (this.group == null && (this.group_id == null || "".equals(this.group_id))) {
+            this.group = createGroup();
+            this.group_id = this.group.id;
+        } else if (this.group == null) {
+            this.group = realm.where(Group.class)
+                    .equalTo("id", this.group_id)
+                    .findFirst();
+        }
+        realm.beginTransaction();
 
-        fab_view.setVisibility(View.GONE);
-        fab_edit.setVisibility(View.VISIBLE);
-        fab_edit_delete.setVisibility(View.VISIBLE);
-        layout_tag_add.setVisibility(View.VISIBLE);
-        ed_title.setEnabled(true);
+        if (title != null) {
+            this.group.title = title;
+        }
+        if (tags != null) {
+            this.group.tags.clear();
+            for (HashTag hashTag : tags) {
+                this.group.tags.add(saveTag(realm, hashTag.tag));
+            }
+        }
+        this.group.last_date = Database.getCurrentDate();
+        this.group.isValidated = false;
+
+        realm.commitTransaction();
+
+        saveGroupMemo();
     }
 
-    private void setModeView() {
-        this.mode = MODE_VIEW;
-        setMode();
-    }
+    private void saveGroupMemo() {
+        boolean isCretated = false;
+        Realm realm = Realm.getDefaultInstance();
+        realm.beginTransaction();
 
-    private void setModeEdit() {
-        this.mode = MODE_EDIT;
-        setMode();
-    }
+        if (this.groupMemo == null) {
+            this.groupMemo = realm.where(GroupMemo.class)
+                    .equalTo("type_id", this.group_id)
+                    .findFirst();
+            if (groupMemo == null) {
+                this.groupMemo = realm.createObject(GroupMemo.class);
+                this.groupMemo.id = Database.createID(GroupMemo.class);
+                this.groupMemo.parentGroupId = this.parentGroupId;
+                this.groupMemo.type = GroupMemo.TYPE_GROUP;
+                this.groupMemo.type_id = this.group_id;
+                this.groupMemo.group = this.group;
 
-    private void saveGroup() {
-        Dialog.show(this);
-
-        Group group = null;
-
-        switch (this.mode) {
-            case MODE_CREATE:
-                group = createGroup();
-                break;
-            case MODE_EDIT:
-                group = editGroup();
-                break;
+                isCretated = true;
+            }
         }
 
-        refleshParentGroup(saveGroupMemo(group));
-        this.group_id = group.id;
+        this.groupMemo.last_date = Database.getCurrentDate();
+        this.groupMemo.isValidated = false;
 
-        Dialog.dismiss();
+        realm.commitTransaction();
 
-        setModeView();
+        if (isCretated) {
+            refleshParentGroup(groupMemo);
+        }
+    }
+
+    private void saveAfterCheck() {
+        String title = ed_title.getText().toString();
+        List<HashTag> hashTags = hashTagListAdapter.get();
+        if (this.group == null) {
+            save(title, hashTags);
+        } else {
+            if (title.equals(this.group.title)) {
+                title = null;
+            }
+            if (hashTags.size() == this.group.tags.size()) {
+                boolean isChanged = false;
+                for (int i = 0; i < this.group.tags.size(); i++) {
+                    if (!this.group.tags.get(i).tag.equals(hashTags.get(i).tag)) {
+                        isChanged = true;
+                    }
+                }
+                if (!isChanged) {
+                    hashTags = null;
+                }
+            }
+            if (title != null || hashTags != null) {
+                save(title, hashTags);
+            }
+        }
     }
 
     private Group createGroup() {
         Realm realm = Realm.getDefaultInstance();
-
         realm.beginTransaction();
 
         Group group = realm.createObject(Group.class);
-
         group.id = Database.createID(Group.class);
-        group.title = ed_title.getText().toString();
         group.parentGroupId = this.parentGroupId;
         group.tags = new RealmList<>();
-        for (HashTag hashTag : hashTagListAdapter.get()) {
-            group.tags.add(saveTag(realm, hashTag.tag));
-        }
-        group.tags.sort("tag");
-        group.isValidated = false;
-        group.last_date = Database.getCurrentDate();
-
-        realm.commitTransaction();
-        return group;
-    }
-
-    private Group editGroup() {
-        Realm realm = Realm.getDefaultInstance();
-
-        Group group = realm.where(Group.class)
-                .equalTo("id", group_id)
-                .findFirst();
-        if (group == null) { // CREATE 로 전환
-            mode = MODE_CREATE;
-            return createGroup();
-        }
-
-        realm.beginTransaction();
-        group.title = ed_title.getText().toString();
-        group.tags.clear();
-        for (HashTag hashTag : hashTagListAdapter.get()) {
-            group.tags.add(saveTag(realm, hashTag.tag));
-        }
-        group.tags.sort("tag");
-        group.isValidated = false;
-        group.last_date = Database.getCurrentDate();
 
         realm.commitTransaction();
 
         return group;
-    }
-
-    private GroupMemo saveGroupMemo(Group group) {
-        Realm realm = Realm.getDefaultInstance();
-
-        GroupMemo groupMemo = realm.where(GroupMemo.class)
-                .equalTo("type_id", group.id)
-                .findFirst();
-        realm.beginTransaction();
-        if (groupMemo == null) {
-            groupMemo = realm.createObject(GroupMemo.class);
-            groupMemo.id = Database.createID(GroupMemo.class);
-            groupMemo.parentGroupId = this.parentGroupId;
-            groupMemo.type_id = group.id;
-            groupMemo.group = group;
-        }
-        groupMemo.type = GroupMemo.TYPE_GROUP;
-        groupMemo.isValidated = false;
-        groupMemo.last_date = Database.getCurrentDate();
-
-        realm.commitTransaction();
-
-        return groupMemo;
     }
 
     /**
@@ -336,6 +311,7 @@ public class GroupManageActivity extends AppCompatActivity {
             }
             hashTagListAdapter.add(hashTag);
         }
+        hashTagListAdapter.sort();
     }
 
     private View.OnClickListener onClickListener = v -> {
@@ -343,27 +319,7 @@ public class GroupManageActivity extends AppCompatActivity {
             case R.id.bt_tag_add:
                 addTag();
                 break;
-            case R.id.fab_view_delete:
-                break;
-            case R.id.fab_view_edit:
-                setModeEdit();
-                break;
-            case R.id.fab_edit_delete:
-                break;
-            case R.id.fab_edit_save:
-                saveGroup();
-                break;
-            case R.id.fab_edit_cancel:
-                fab_view.close(false);
-                if (this.mode == MODE_CREATE) {
-                    finish();
-                    return;
-                }
-                setModeView();
-                break;
         }
-        fab_view.close(true);
-        fab_edit.close(true);
     };
 
     private HashTagListAdapter.Callback hashTagListAdapterCallback = new HashTagListAdapter.Callback() {

@@ -88,42 +88,4 @@
             tools:listitem="@layout/tag_item" />
     </RelativeLayout>
 
-    <com.github.clans.fab.FloatingActionMenu
-        android:id="@+id/fab_edit"
-        style="@style/FloatStyle.Menu">
-
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fab_edit_delete"
-            android:src="@android:drawable/ic_menu_delete"
-            style="@style/FloatStyle.Button" />
-
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fab_edit_save"
-            android:src="@android:drawable/ic_menu_save"
-            style="@style/FloatStyle.Button" />
-
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fab_edit_cancel"
-            android:src="@android:drawable/ic_menu_close_clear_cancel"
-            style="@style/FloatStyle.Button" />
-
-    </com.github.clans.fab.FloatingActionMenu>
-
-
-    <com.github.clans.fab.FloatingActionMenu
-        android:id="@+id/fab_view"
-        style="@style/FloatStyle.Menu">
-
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fab_view_delete"
-            android:src="@android:drawable/ic_menu_delete"
-            style="@style/FloatStyle.Button" />
-
-        <com.github.clans.fab.FloatingActionButton
-            android:id="@+id/fab_view_edit"
-            android:src="@android:drawable/ic_menu_edit"
-            style="@style/FloatStyle.Button" />
-
-    </com.github.clans.fab.FloatingActionMenu>
-
 </RelativeLayout>
