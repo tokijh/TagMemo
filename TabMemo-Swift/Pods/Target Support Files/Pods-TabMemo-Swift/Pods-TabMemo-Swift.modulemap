@@ -1,0 +1,6 @@
+framework module Pods_TabMemo_Swift {
+  umbrella header "Pods-TabMemo-Swift-umbrella.h"
+
+  export *
+  module * { export * }
+}

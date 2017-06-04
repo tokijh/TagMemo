@@ -1,0 +1,23 @@
+PODS:
+  - EZAlertController (3.2)
+  - Realm (2.7.0):
+    - Realm/Headers (= 2.7.0)
+  - Realm/Headers (2.7.0)
+  - RealmSwift (2.7.0):
+    - Realm (= 2.7.0)
+  - TagListView (1.1.0)
+
+DEPENDENCIES:
+  - EZAlertController (= 3.2)
+  - RealmSwift
+  - TagListView (~> 1.0)
+
+SPEC CHECKSUMS:
+  EZAlertController: 633be01320bed47720be54054df47667d61c2481
+  Realm: 07e5d3a9e0e41d65fd5f9f05150ed6295d0f093b
+  RealmSwift: 6d06425d3900c86473c4f323bf6949b43fca22bc
+  TagListView: d0267a71393f3c73db5c9ea2f979ac1125fcab56
+
+PODFILE CHECKSUM: a3943c5823fea63e70b33b66770a14b96bc7709f
+
+COCOAPODS: 1.2.0.beta.1
