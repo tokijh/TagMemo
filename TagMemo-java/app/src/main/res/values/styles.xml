@@ -6,6 +6,47 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+
+        <item name="android:listDivider">@drawable/line</item>
+    </style>
+
+    <style name="AppTheme.List" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+
+        <item name="android:listDivider">@drawable/line</item>
+    </style>
+    
+    <style name="AppTheme.Toolbar">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_alignParentTop">true</item>
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="android:layout_alignParentLeft">true</item>
+    </style>
+
+    <style name="FloatStyle">
+        <item name="android:padding">15dp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="FloatStyle.Menu" parent="FloatStyle">
+        <item name="menu_colorNormal">@color/colorPrimary</item>
+        <item name="menu_colorRipple">@color/colorPrimaryDark</item>
+        <item name="menu_colorPressed">@color/colorPrimaryDark</item>
+        <item name="android:layout_marginBottom">5dp</item>
+        <item name="android:layout_marginRight">5dp</item>
+        <item name="android:layout_alignParentBottom">true</item>
+        <item name="android:layout_alignParentRight">true</item>
+    </style>
+
+    <style name="FloatStyle.Button" parent="FloatStyle">
+        <item name="fab_size">mini</item>
+        <item name="fab_colorNormal">@color/colorPrimary</item>
+        <item name="fab_colorRipple">@color/colorPrimaryDark</item>
+        <item name="fab_colorPressed">@color/colorPrimaryDark</item>
     </style>
 
 </resources>
